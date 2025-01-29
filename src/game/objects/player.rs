@@ -64,13 +64,6 @@ impl Object for Player {
         
         let texture = unsafe{ &*self.texture.unwrap() };
        
-        d.draw_text(
-            format!("animation_frame: {}", self.animation_frame.round()).as_str(),
-            10, 10,
-            30,
-            Color::WHITE,
-        );
-       
         d.draw_texture_pro(
             texture,
             Rectangle::new(

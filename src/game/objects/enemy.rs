@@ -14,7 +14,7 @@ pub struct Enemy {
 impl Enemy {
     pub fn new(x: f32, y: f32) -> Enemy {
         Enemy {
-            entity: Entity::new(x, y, 32.0, 32.0, 1.0, 1.0),
+            entity: Entity::new(x, y, 64.0, 64.0, 1.0, 1.0),
             speed: 4.0,
             texture: None,
             animation_frame: 0.0,
@@ -68,13 +68,6 @@ impl Object for Enemy {
 
     fn render(&self, d: &mut crate::engine::engine::RenderTextureModeDrawHandle<'_> ) {
 
-        d.draw_text(
-            format!("animation_frame: {}", self.animation_frame.round()).as_str(),
-            10, 10,
-            30,
-            Color::WHITE,
-        );
-        
         let texture = unsafe { &*self.texture.unwrap() };
         d.draw_texture_pro(
             texture,

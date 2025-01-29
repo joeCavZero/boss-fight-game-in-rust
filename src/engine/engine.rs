@@ -138,7 +138,7 @@ impl Engine {
 
 fn render_canvas( d: &mut RaylibDrawHandle, canvas: &mut RenderTexture2D , win_width: i32, win_height: i32, canvas_width: i32, canvas_height: i32) {
 
-    let delta_x = win_width as f32 / canvas_height as f32;
+    let delta_x = win_width as f32 / canvas_width as f32;
     let delta_y = win_height as f32 / canvas_height as f32;
 
     let scale = if delta_x < delta_y { delta_x } else { delta_y };
