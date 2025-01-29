@@ -9,58 +9,93 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn new(x: f32, y: f32, width: f32, height: f32) -> Entity {
+    pub fn new(x: f32, y: f32, width: f32, height: f32, motion_x: f32, motion_y: f32) -> Entity {
         Entity {
             position: Vector2::new(x, y),
             size: Vector2::new(width, height),
-            motion: Vector2::new(0.0, 0.0),
+            motion: Vector2::new(motion_x, motion_y),
         }
     }
 
-    pub fn move_and_collide(&mut self, tilemap: &mut Tilemap) {
-        let new_position = self.position + self.motion;
+    pub fn is_colliding_with_tilemap(&self, tilemap: &Tilemap) -> bool {
+        let x = self.position.x / tilemap.tile_size;
+        let y = self.position.y / tilemap.tile_size;
 
-        let x = new_position.x;
-        let y = new_position.y;
+        let x_end = (self.position.x + self.size.x) / tilemap.tile_size;
+        let y_end = (self.position.y + self.size.y) / tilemap.tile_size;
 
-        let x1 = x;
-        let y1 = y;
-        let x2 = x + self.size.x;
-        let y2 = y + self.size.y;
-
-        let tile_size = tilemap.tile_size as f32;
-
-        let mut x1_tile = (x1 / tile_size) as i32;
-        let mut y1_tile = (y1 / tile_size) as i32;
-        let mut x2_tile = (x2 / tile_size) as i32;
-        let mut y2_tile = (y2 / tile_size) as i32;
-
-        if x1_tile < 0 {
-            x1_tile = 0;
-        }
-        if y1_tile < 0 {
-            y1_tile = 0;
-        }
-        if x2_tile >= tilemap.tiles[0].len() as i32 {
-            x2_tile = tilemap.tiles[0].len() as i32 - 1;
-        }
-        if y2_tile >= tilemap.tiles.len() as i32 {
-            y2_tile = tilemap.tiles.len() as i32 - 1;
-        }
-
-        let mut collision = false;
-
-        for y in y1_tile..=y2_tile {
-            for x in x1_tile..=x2_tile {
-                if tilemap.tiles[y as usize][x as usize] == '#' {
-                    collision = true;
-                    break;
+        for i in x as usize..x_end as usize {
+            for j in y as usize..y_end as usize {
+                if tilemap.tiles[j][i] != ' ' {
+                    return true;
                 }
             }
         }
 
+        false
+    }
+
+    pub fn move_and_collide(&mut self,speed: f32, tilemap: &mut Tilemap) {
+        let mut is_colliding = false;
+        let new_pos = Vector2::new(
+            self.position.x + self.motion.x * speed,
+            self.position.y + self.motion.y * speed,
+        );
+
+        for i_y in 0..tilemap.tiles.len() {
+            for i_x in 0..tilemap.tiles[i_y].len() {
+                let tile_char = tilemap.tiles[i_y][i_x];
+
+                
+
+                if tile_char != ' ' {
+                    let tile_pos = Vector2::new(
+                        i_x as f32 * tilemap.tile_size,
+                        i_y as f32 * tilemap.tile_size,
+                    );
+
+                    let tile_rect = Rectangle::new(
+                        tile_pos.x,
+                        tile_pos.y,
+                        tilemap.tile_size,
+                        tilemap.tile_size,
+                    );
+
+                    let entity_rect = Rectangle::new(
+                        new_pos.x,
+                        new_pos.y,
+                        self.size.x,
+                        self.size.y,
+                    );
+
+                    if tile_rect.check_collision_recs(&entity_rect) {
+                        is_colliding = true;
+                    }
+                }
+            }
+        }
+        if is_colliding == false {
+            self.position = new_pos;
+        }
+        /*
+        let new_position = Vector2::new(
+            self.position.x + self.motion.x * speed,
+            self.position.y + self.motion.y * speed,
+        );
+
+        let x = new_position.x / tilemap.tile_size;
+        let y = new_position.y / tilemap.tile_size;
+
+        let x_end = (new_position.x + self.size.x) / tilemap.tile_size;
+        let y_end = (new_position.y + self.size.y) / tilemap.tile_size;
+
+        let mut collision = false;
+
+        for i_y 
+
         if !collision {
             self.position = new_position;
         }
+        */
     }
 }

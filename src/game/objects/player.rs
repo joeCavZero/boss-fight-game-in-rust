@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use raylib::prelude::*;
 
 use crate::engine::{engine::Engine, entity::Entity, object::Object};
@@ -8,15 +6,21 @@ pub struct Player {
     pub entity: Entity,
     pub speed: f32,
 
-    pub texture: Option<Rc<Texture2D>>,
+    pub texture: Option<*mut Texture2D>,
+    pub animation_frame: f32,
+    pub animation_speed: f32,
+    pub animation_quantity: u32,
 }
 
 impl Player {
     pub fn new(x: f32, y: f32) -> Player {
         Player {
-            entity: Entity::new(x, y, 48.0, 64.0),
+            entity: Entity::new(x, y, 24.0, 32.0, 0.0, 0.0),
             speed: 3.0,
             texture: None,
+            animation_frame: 0.0,
+            animation_speed: 0.01,
+            animation_quantity: 2,
         }
     }
 }
@@ -46,18 +50,33 @@ impl Object for Player {
 
         self.entity.motion.normalize();
 
-        self.entity.position.x += self.entity.motion.x * self.speed;
-        self.entity.position.y += self.entity.motion.y * self.speed;
+        let main_tilemap = engine.get_scene().unwrap().get_base_scene().get_tilemap("main-tilemap").unwrap();
+        self.entity.move_and_collide(self.speed, main_tilemap);
+
+        self.animation_frame += self.animation_speed;
+        if self.animation_frame >= self.animation_quantity as f32 {
+            self.animation_frame = 0.0;
+        }
+       
     }
 
     fn render(&self, d: &mut RaylibTextureMode<'_, RaylibDrawHandle<'_>>) {
         
-        
+        let texture = unsafe{ &*self.texture.unwrap() };
+       
+        d.draw_text(
+            format!("animation_frame: {}", self.animation_frame.round()).as_str(),
+            10, 10,
+            30,
+            Color::WHITE,
+        );
+       
         d.draw_texture_pro(
-            &**self.texture.as_ref().unwrap(),
+            texture,
             Rectangle::new(
-                0.0,0.0,
-                16.0, 24.0,
+                24.0 * self.animation_frame.round(),
+                0.0,
+                24.0, 32.0,
             ),
             Rectangle::new(
                 self.entity.position.x,

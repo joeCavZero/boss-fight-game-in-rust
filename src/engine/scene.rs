@@ -6,6 +6,8 @@ pub trait Scene {
     fn init(&mut self, engine: &mut Engine);
     fn update(&mut self, engine: &mut Engine);
     fn render(&mut self, d: &mut RenderTextureModeDrawHandle<'_>);  
+
+    fn get_base_scene(&mut self) -> &mut BaseScene;
 }
 
 pub struct BaseScene {
@@ -23,9 +25,8 @@ impl BaseScene {
         }
     }
 
-    pub fn init(&mut self, engine: &mut Engine) -> &mut BaseScene {
+    pub fn init(&mut self, engine: &mut Engine) {
         self.engine = Some(engine);
-        self
     }
 
     pub fn update(&mut self, engine: &mut Engine) {
@@ -54,5 +55,9 @@ impl BaseScene {
 
     pub fn add_tilemap(&mut self, name: &str, tilemap: Tilemap) {
         self.tilemaps.insert(name.to_string(), tilemap);
+    }
+
+    pub fn get_tilemap(&mut self, name: &str) -> Option<&mut Tilemap> {
+        self.tilemaps.get_mut(name)
     }
 }

@@ -27,9 +27,11 @@ impl Scene for Scene1 {
         
         tilemap.add_tile_tileset('#', 0, 0);
         tilemap.add_tile_tileset('1', 16, 0);
+        tilemap.add_tile_tileset('2', 0, 16);
+        tilemap.add_tile_tileset('3', 16, 16);
 
         self.base_scene.add_tilemap(
-            "tilemap",
+            "main-tilemap",
             tilemap,
         );
 
@@ -42,4 +44,9 @@ impl Scene for Scene1 {
     fn render(&mut self, d: &mut RenderTextureModeDrawHandle<'_>) {
         self.base_scene.render(d);
     }
+
+    fn get_base_scene(&mut self) -> &mut BaseScene {
+        &mut self.base_scene
+    }
+
 }

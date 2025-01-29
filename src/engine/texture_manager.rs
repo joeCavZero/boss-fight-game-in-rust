@@ -1,11 +1,9 @@
-use std::rc::Rc;
-
 use raylib::prelude::*;
 
 pub struct TextureManager {
     rl: *mut RaylibHandle,
     thread: *const RaylibThread,
-    pub textures: std::collections::HashMap<String, Rc<Texture2D>>,
+    pub textures: std::collections::HashMap<String, Texture2D>,
 }
 
 impl TextureManager {
@@ -22,7 +20,7 @@ impl TextureManager {
         let thread = unsafe { &*self.thread };
         match rl.load_texture(thread, path) {
             Ok(texture) => {
-                self.textures.insert(name.to_string(), Rc::new(texture));
+                self.textures.insert(name.to_string(), texture);
                 Ok(())
             },
             Err(e) => {
@@ -33,15 +31,12 @@ impl TextureManager {
         }
     }
 
-    pub fn get_texture(&self, name: &str) -> Result<Rc<Texture2D>, String> {
+    pub fn get_texture(&self, name: &str) -> Result<*mut Texture2D, String> {
         match self.textures.get(&name.to_string()) {
             Some(texture) => {
-                let aux = Rc::clone(texture);
-                println!(
-                    "---> There are {} references pointing to the texture", 
-                    Rc::strong_count(texture)
-                );
-                Ok(aux)
+                // essa conversão é segura pois o ponteiro é apenas lido
+                let texture = texture as *const Texture2D as *mut Texture2D;
+                Ok(texture)
             }
             None => {
                 let err = format!("---> Texture {} has not been loaded", name);

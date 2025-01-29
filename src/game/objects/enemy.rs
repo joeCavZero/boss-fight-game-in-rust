@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use raylib::prelude::*;
 
 use crate::engine::{entity::Entity, object::Object};
@@ -7,24 +5,28 @@ use crate::engine::{entity::Entity, object::Object};
 pub struct Enemy {
     pub entity: Entity,
     pub speed: f32,
-
-    pub texture: Option<Rc<Texture2D>>,
+    pub texture: Option<*mut Texture2D>,
+    pub animation_frame: f32,
+    pub animation_speed: f32,
+    pub animation_quantity: u32,
 }
 
 impl Enemy {
     pub fn new(x: f32, y: f32) -> Enemy {
         Enemy {
-            entity: Entity::new(x, y, 48.0, 64.0),
+            entity: Entity::new(x, y, 32.0, 32.0, 1.0, 1.0),
             speed: 4.0,
-
             texture: None,
+            animation_frame: 0.0,
+            animation_speed: 0.01,
+            animation_quantity: 2,
         }
     }
 }
 
 impl Object for Enemy {
     fn init(&mut self, engine: &mut crate::engine::engine::Engine) {
-        self.texture = Some(engine.texture_manager.get_texture("player").unwrap());
+        self.texture = Some(engine.texture_manager.get_texture("enemy").unwrap());
     }
     fn update(&mut self, engine: &mut crate::engine::engine::Engine) {
 
@@ -58,20 +60,27 @@ impl Object for Enemy {
         self.entity.position.x += self.entity.motion.x * self.speed;
         self.entity.position.y += self.entity.motion.y * self.speed;
 
+        self.animation_frame += self.animation_speed;
+        if self.animation_frame >= self.animation_quantity as f32 {
+            self.animation_frame = 0.0;
+        }
     }
 
     fn render(&self, d: &mut crate::engine::engine::RenderTextureModeDrawHandle<'_> ) {
-        d.draw_rectangle_v(
-            self.entity.position,
-            self.entity.size,
-            Color::RED,
-        );
 
+        d.draw_text(
+            format!("animation_frame: {}", self.animation_frame.round()).as_str(),
+            10, 10,
+            30,
+            Color::WHITE,
+        );
+        
+        let texture = unsafe { &*self.texture.unwrap() };
         d.draw_texture_pro(
-            &**self.texture.as_ref().unwrap(),
+            texture,
             Rectangle::new(
-                0.0,0.0,
-                16.0, 24.0,
+                32.0 * self.animation_frame.round(),0.0,
+                32.0, 32.0,
             ),
             Rectangle::new(
                 self.entity.position.x,

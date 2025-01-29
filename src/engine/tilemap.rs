@@ -1,4 +1,4 @@
-use std::{char, collections::HashMap, rc::Rc};
+use std::{char, collections::HashMap};
 
 use raylib::prelude::*;
 
@@ -7,13 +7,13 @@ use super::engine::RenderTextureModeDrawHandle;
 pub struct Tilemap {
     pub tiles: Vec<Vec<char>>,
     pub tile_size: f32,
-    pub texture: Rc<Texture2D>,
+    pub texture: *mut Texture2D,
 
     pub tileset: HashMap<char, Vector2>,
 }
 
 impl Tilemap {
-    pub fn new(file_path: &str, tile_size: u32, texture: Rc<Texture2D>) -> Tilemap {
+    pub fn new(file_path: &str, tile_size: u32, texture: *mut Texture2D) -> Tilemap {
         let mut tl = Tilemap {
             tiles: Vec::new(),
             tile_size: tile_size as f32,
@@ -48,8 +48,9 @@ impl Tilemap {
             for (x, tile_char ) in line.iter().enumerate() {
                 match self.tileset.get(tile_char) {
                     Some(pos) => {
+                        let texture = unsafe { &*self.texture };
                         d.draw_texture_pro(
-                            &*self.texture,
+                            texture,
                             Rectangle::new(
                                 pos.x,
                                 pos.y,

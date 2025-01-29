@@ -7,6 +7,7 @@ fn main() {
         "cool game",
     );
     engine.texture_manager.load_texture("player", "assets/images/player.png").unwrap();
+    engine.texture_manager.load_texture("enemy", "assets/images/enemy.png").unwrap();
     engine.texture_manager.load_texture("tileset1", "assets/images/tileset1.png").unwrap();
 
     let mut scene1 = Box::new(Scene1::new());
@@ -14,6 +15,7 @@ fn main() {
     scene1.init(&mut engine);
     
     engine.set_scene(scene1);
+    
     engine.run();
 
 }

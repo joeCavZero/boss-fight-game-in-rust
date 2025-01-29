@@ -40,10 +40,7 @@ impl Engine {
         }
     }
 
-    pub fn set_scene(&mut self, scene: Box<dyn Scene>) {
-        self.scene = Some(scene);
-    }
-
+    
     pub fn run(&mut self) {
         self.running = true;
 
@@ -58,14 +55,8 @@ impl Engine {
     }
 
     pub fn update(&mut self) {
-        //idea: self.scene.as_mut().unwrap().update(&mut self);
-        if let Some(mut scene) = self.scene.take() {
-            // Passar self para o método update
-            scene.update(self);
-    
-            // Colocar o valor de volta em self.scene
-            self.scene = Some(scene);
-        }
+        let aux = self as *mut Engine;
+        self.get_scene().unwrap().update(unsafe { &mut *aux });
     }
 
     pub fn render(&mut self) {
@@ -134,6 +125,14 @@ impl Engine {
             (raw_position.y - diff_y / 2.0) / scale,
         )
 
+    }
+
+    pub fn get_scene(&mut self) -> Option<&mut Box<dyn Scene>> {
+        self.scene.as_mut()
+    }
+
+    pub fn set_scene(&mut self, scene: Box<dyn Scene>) {
+        self.scene = Some(scene);
     }
 }
 
