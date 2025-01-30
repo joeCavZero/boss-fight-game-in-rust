@@ -1,6 +1,6 @@
 use raylib::prelude::*;
 
-use crate::engine::{entity::Entity, object::Object};
+use crate::engine::{entity::Entity, object::{BaseObject, Object}};
 
 pub struct Enemy {
     pub entity: Entity,
@@ -25,6 +25,10 @@ impl Enemy {
 }
 
 impl Object for Enemy {
+    fn get_base_object(&mut self) -> &mut BaseObject {
+        &mut self.entity.base_object
+    }
+
     fn init(&mut self, engine: &mut crate::engine::engine::Engine) {
         self.texture = Some(engine.texture_manager.get_texture("enemy").unwrap());
     }

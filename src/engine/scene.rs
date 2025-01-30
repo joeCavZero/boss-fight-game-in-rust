@@ -14,6 +14,7 @@ pub struct BaseScene {
     pub engine: Option<*mut Engine>,
     pub objects: Vec<Box<dyn Object>>,
     pub tilemaps: HashMap<String, Tilemap>,
+    pub id_counter: u32,
 }
 
 impl BaseScene {
@@ -22,6 +23,7 @@ impl BaseScene {
             engine: None,
             objects: Vec::new(),
             tilemaps: HashMap::new(),
+            id_counter: 0,
         }
     }
 
@@ -49,7 +51,8 @@ impl BaseScene {
     pub fn add_object(&mut self, mut obj: Box<dyn Object>) {
         
         unsafe { obj.init(&mut *self.engine.unwrap()) }
-
+        obj.as_mut().get_base_object().set_id(self.id_counter);
+        self.id_counter += 1;
         self.objects.push(obj);
     }
 
@@ -59,5 +62,14 @@ impl BaseScene {
 
     pub fn get_tilemap(&mut self, name: &str) -> Option<&mut Tilemap> {
         self.tilemaps.get_mut(name)
+    }
+
+    pub fn remove_object(&mut self, id: u32) {
+        for i in 0..self.objects.len() {
+            if self.objects[i].get_base_object().get_id() == id {
+                self.objects.remove(i);
+                break;
+            }
+        }
     }
 }

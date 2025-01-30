@@ -1,8 +1,9 @@
 use raylib::prelude::*;
 
-use super::tilemap::Tilemap;
+use super::{object::BaseObject, tilemap::Tilemap};
 
 pub struct Entity {
+    pub base_object: BaseObject,
     pub position: Vector2,
     pub size: Vector2,
     pub motion: Vector2,
@@ -11,6 +12,7 @@ pub struct Entity {
 impl Entity {
     pub fn new(x: f32, y: f32, width: f32, height: f32, motion_x: f32, motion_y: f32) -> Entity {
         Entity {
+            base_object: BaseObject::new(),
             position: Vector2::new(x, y),
             size: Vector2::new(width, height),
             motion: Vector2::new(motion_x, motion_y),
@@ -77,25 +79,5 @@ impl Entity {
         if is_colliding == false {
             self.position = new_pos;
         }
-        /*
-        let new_position = Vector2::new(
-            self.position.x + self.motion.x * speed,
-            self.position.y + self.motion.y * speed,
-        );
-
-        let x = new_position.x / tilemap.tile_size;
-        let y = new_position.y / tilemap.tile_size;
-
-        let x_end = (new_position.x + self.size.x) / tilemap.tile_size;
-        let y_end = (new_position.y + self.size.y) / tilemap.tile_size;
-
-        let mut collision = false;
-
-        for i_y 
-
-        if !collision {
-            self.position = new_position;
-        }
-        */
     }
 }

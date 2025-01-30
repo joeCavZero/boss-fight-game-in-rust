@@ -1,6 +1,8 @@
 use raylib::prelude::*;
 
-use crate::engine::{engine::Engine, entity::Entity, object::Object};
+use crate::{engine::{engine::Engine, entity::Entity, object::{BaseObject, Object}}, math};
+
+use super::shoot::Shoot;
 
 pub struct Player {
     pub entity: Entity,
@@ -19,13 +21,17 @@ impl Player {
             speed: 3.0,
             texture: None,
             animation_frame: 0.0,
-            animation_speed: 0.01,
+            animation_speed: 0.1,
             animation_quantity: 2,
         }
     }
 }
 
 impl Object for Player {
+    fn get_base_object(&mut self) -> &mut BaseObject {
+        &mut self.entity.base_object
+    }
+
     fn init(&mut self, engine: &mut Engine) {
         
         self.texture = Some(engine.texture_manager.get_texture("player").unwrap());
@@ -53,9 +59,31 @@ impl Object for Player {
         let main_tilemap = engine.get_scene().unwrap().get_base_scene().get_tilemap("main-tilemap").unwrap();
         self.entity.move_and_collide(self.speed, main_tilemap);
 
-        self.animation_frame += self.animation_speed;
+        if self.entity.motion.x != 0.0 || self.entity.motion.y != 0.0 {
+            self.animation_frame += self.animation_speed;
+        }
+        
         if self.animation_frame >= self.animation_quantity as f32 {
             self.animation_frame = 0.0;
+        }
+
+        // shoot
+        if engine.is_action_just_pressed("z") {
+            let mouse_position = engine.get_mouse_position();
+            let aim_angle_vector = math::vector2::vector2_aim_to_vector2(
+                self.entity.position,
+                mouse_position,
+            );
+            engine.get_scene().unwrap().get_base_scene().add_object(
+                Box::new(
+                    Shoot::new(
+                        self.entity.position.x+self.entity.size.x/2.0,
+                        self.entity.position.y+self.entity.size.y/2.0,
+                        aim_angle_vector.x,
+                        aim_angle_vector.y,
+                    ),
+                ),
+            );
         }
        
     }

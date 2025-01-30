@@ -39,7 +39,6 @@ impl Engine {
             canvas_size: (canvas_width, canvas_height),
         }
     }
-
     
     pub fn run(&mut self) {
         self.running = true;
@@ -98,7 +97,13 @@ impl Engine {
             "right" => self.rl.is_key_down(KeyboardKey::KEY_D) || self.rl.is_key_down(KeyboardKey::KEY_RIGHT),
             "left" => self.rl.is_key_down(KeyboardKey::KEY_A) || self.rl.is_key_down(KeyboardKey::KEY_LEFT),
             
-            "z" => self.rl.is_key_down(KeyboardKey::KEY_Z) || self.rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT),
+            _ => false,
+        }
+    }
+
+    pub fn is_action_just_pressed(&self, action: &str) -> bool {
+        match action {
+            "z" => self.rl.is_key_pressed(KeyboardKey::KEY_Z) || self.rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT),
             _ => false,
         }
     }
