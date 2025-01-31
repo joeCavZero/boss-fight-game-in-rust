@@ -2,7 +2,7 @@ use std::{char, collections::HashMap};
 
 use raylib::prelude::*;
 
-use super::engine::RenderTextureModeDrawHandle;
+use super::engine::{Engine, RenderTextureModeDrawHandle};
 
 pub struct Tilemap {
     pub tiles: Vec<Vec<char>>,
@@ -43,7 +43,7 @@ impl Tilemap {
         tl
     }
 
-    pub fn render(&mut self, d: &mut RenderTextureModeDrawHandle) {
+    pub fn render(&mut self, _: &mut Engine, d: &mut RenderTextureModeDrawHandle) {
         for (y, line) in self.tiles.iter().enumerate() {
             for (x, tile_char ) in line.iter().enumerate() {
                 match self.tileset.get(tile_char) {

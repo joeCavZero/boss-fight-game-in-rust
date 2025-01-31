@@ -65,13 +65,16 @@ impl Engine {
         let canvas_height = self.canvas_size.1;
         let mouse_position = self.get_mouse_position();
 
+        let aux = self as *mut Engine;
+
         let mut d = self.rl.begin_drawing(&self.thread);
         d.clear_background(Color::BLACK);
         {
             
             let mut t = d.begin_texture_mode(&self.thread, &mut self.canvas);
             t.clear_background(Color::DARKSALMON);
-            self.scene.as_mut().unwrap().render(&mut t);
+            
+            self.scene.as_mut().unwrap().render( unsafe { &mut *aux }, &mut t);
 
             t.draw_circle_v(
                 mouse_position,
@@ -104,6 +107,7 @@ impl Engine {
     pub fn is_action_just_pressed(&self, action: &str) -> bool {
         match action {
             "z" => self.rl.is_key_pressed(KeyboardKey::KEY_Z) || self.rl.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT),
+            "start" => self.rl.is_key_pressed(KeyboardKey::KEY_ENTER),
             _ => false,
         }
     }

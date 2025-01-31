@@ -10,9 +10,9 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn new(x: f32, y: f32, width: f32, height: f32, motion_x: f32, motion_y: f32) -> Entity {
+    pub fn new(name: String, x: f32, y: f32, width: f32, height: f32, motion_x: f32, motion_y: f32) -> Entity {
         Entity {
-            base_object: BaseObject::new(),
+            base_object: BaseObject::new(name),
             position: Vector2::new(x, y),
             size: Vector2::new(width, height),
             motion: Vector2::new(motion_x, motion_y),
@@ -79,5 +79,16 @@ impl Entity {
         if is_colliding == false {
             self.position = new_pos;
         }
+    }
+
+    pub fn is_colliding_with_rect(&self, rect: &Rectangle) -> bool {
+        self.position.x < rect.x + rect.width &&
+        self.position.x + self.size.x > rect.x &&
+        self.position.y < rect.y + rect.height &&
+        self.position.y + self.size.y > rect.y
+    }
+
+    pub fn get_rect(&self) -> Rectangle {
+        Rectangle::new(self.position.x, self.position.y, self.size.x, self.size.y)
     }
 }

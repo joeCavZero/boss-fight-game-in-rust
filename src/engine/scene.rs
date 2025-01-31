@@ -5,7 +5,7 @@ use super::{engine::{Engine, RenderTextureModeDrawHandle}, object::Object, tilem
 pub trait Scene {
     fn init(&mut self, engine: &mut Engine);
     fn update(&mut self, engine: &mut Engine);
-    fn render(&mut self, d: &mut RenderTextureModeDrawHandle<'_>);  
+    fn render(&mut self, engine: &mut Engine, d: &mut RenderTextureModeDrawHandle<'_>);  
 
     fn get_base_scene(&mut self) -> &mut BaseScene;
 }
@@ -37,13 +37,13 @@ impl BaseScene {
         }
     }
 
-    pub fn render(&mut self, d: &mut RenderTextureModeDrawHandle<'_>) {
+    pub fn render(&mut self, engine: &mut Engine, d: &mut RenderTextureModeDrawHandle<'_>) {
         for tl in self.tilemaps.values_mut() {
-            tl.render(d);
+            tl.render(engine, d);
         }
         
         for obj in self.objects.iter() {
-            obj.render(d);
+            obj.render(engine, d);
         }
         
     }
@@ -71,5 +71,14 @@ impl BaseScene {
                 break;
             }
         }
+    }
+
+    pub fn get_object_by_name(&mut self, name: &str) -> Option<&mut Box<dyn Object>> {
+        for obj in self.objects.iter_mut() {
+            if obj.get_base_object().get_name() == name {
+                return Some(obj);
+            }
+        }
+        None
     }
 }

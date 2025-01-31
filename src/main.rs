@@ -1,4 +1,4 @@
-use proj04::{engine::{engine::*, scene::Scene}, game::scenes::scene1::Scene1};
+use proj04::{engine::{engine::*, scene::Scene}, game::scenes::menu::Menu};
 
 fn main() {
     
@@ -10,11 +10,11 @@ fn main() {
     engine.texture_manager.load_texture("enemy", "assets/images/enemy.png").unwrap();
     engine.texture_manager.load_texture("tileset1", "assets/images/tileset1.png").unwrap();
 
-    let mut scene1 = Box::new(Scene1::new());
+    let mut menu = Box::new(Menu::new());
     
-    scene1.init(&mut engine);
+    menu.init(&mut engine);
     
-    engine.set_scene(scene1);
+    engine.set_scene(menu);
     
     engine.run();
 

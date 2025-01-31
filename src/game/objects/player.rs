@@ -1,3 +1,5 @@
+use std::any::Any;
+
 use raylib::prelude::*;
 
 use crate::{engine::{engine::Engine, entity::Entity, object::{BaseObject, Object}}, math};
@@ -17,7 +19,7 @@ pub struct Player {
 impl Player {
     pub fn new(x: f32, y: f32) -> Player {
         Player {
-            entity: Entity::new(x, y, 24.0, 32.0, 0.0, 0.0),
+            entity: Entity::new("player".to_string(), x, y, 24.0, 32.0, 0.0, 0.0),
             speed: 3.0,
             texture: None,
             animation_frame: 0.0,
@@ -28,6 +30,11 @@ impl Player {
 }
 
 impl Object for Player {
+
+    fn as_any(&mut self) -> &mut dyn Any {
+        self
+    }
+
     fn get_base_object(&mut self) -> &mut BaseObject {
         &mut self.entity.base_object
     }
@@ -88,7 +95,7 @@ impl Object for Player {
        
     }
 
-    fn render(&self, d: &mut RaylibTextureMode<'_, RaylibDrawHandle<'_>>) {
+    fn render(&self, _: &mut Engine, d: &mut RaylibTextureMode<'_, RaylibDrawHandle<'_>>) {
         
         let texture = unsafe{ &*self.texture.unwrap() };
        
