@@ -1,23 +1,21 @@
-use std::time::Instant;
+use std::time::{Instant, Duration};
 
 pub struct Timer {
-    pub initial_time: Instant,
-    pub wait_time: f32,
+    ready_time: Instant,
 }
 
 impl Timer {
-    pub fn new(wait_time: f32) -> Timer {
+    pub fn new() -> Timer {
         Timer {
-            initial_time: Instant::now(),
-            wait_time,
+            ready_time: Instant::now(), // Inicializa com o momento atual
         }
     }
 
-    pub fn reset(&mut self) {
-        self.initial_time = Instant::now();
+    pub fn reset(&mut self, time: f32) {
+        self.ready_time = Instant::now() + Duration::from_secs_f32(time);
     }
 
     pub fn is_ready(&self) -> bool {
-        self.initial_time.elapsed().as_secs_f32() as f32 >= self.wait_time
+        Instant::now() >= self.ready_time
     }
 }

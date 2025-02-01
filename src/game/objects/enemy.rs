@@ -11,7 +11,7 @@ pub struct Enemy {
     pub animation_frame: f32,
     pub animation_speed: f32,
     pub animation_quantity: u32,
-    pub health: u32,
+    pub health: i32,
 }
 
 impl Enemy {
@@ -103,7 +103,7 @@ impl Object for Enemy {
         d.draw_rectangle(
             (self.entity.position.x + self.entity.size.x / 2.0 - self.health as f32 / 2.0) as i32,
             (self.entity.position.y - 10.0) as i32,
-            self.health as i32,
+            self.health,
             5,
             Color::RED,
         );

@@ -61,12 +61,10 @@ impl Object for Shoot {
                 // cast to enemy type
                 if let Some(boss) = obj.as_any().downcast_mut::<Enemy>() {
                     if boss.entity.is_colliding_with_rect(&self.entity.get_rect()) {
-                        const DAMAGE: u32 = 10;
-                        if boss.health > DAMAGE {
-                            boss.health -= DAMAGE;
-                        } else {
-                            boss.health = 0;
-                        }
+                        const DAMAGE: i32 = 10;
+                        
+                        boss.health = std::cmp::max(0, boss.health - DAMAGE);
+                        
                         objects_to_remove.push(self.get_base_object().get_id());
                     }
                 }

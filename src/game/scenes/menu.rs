@@ -39,12 +39,24 @@ impl Scene for Menu {
     fn render(&mut self, engine: &mut Engine, d: &mut RenderTextureModeDrawHandle<'_>) {
         self.base_scene.render(engine, d);
 
+        let logo_text_size = d.measure_text("BOSS BATTLE", 40);
+        d.draw_text(
+            "BOSS BATTLE", 
+            engine.canvas_size.0 as i32 / 2 - logo_text_size / 2, 50,
+            40, 
+            Color::WHITE,
+        );
+
+        let start_text_size = d.measure_text("Press Enter to start", 20);
         d.draw_text(
             "Press Enter to start", 
-            25, 25, 
+            engine.canvas_size.0 as i32 / 2 - start_text_size / 2, 100,
             20, 
             Color::WHITE,
         );
+
+
+
         const PADDING: i32 = 10;
         d.draw_rectangle_lines(
             PADDING, PADDING,

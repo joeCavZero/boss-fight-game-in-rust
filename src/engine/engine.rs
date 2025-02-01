@@ -72,14 +72,14 @@ impl Engine {
         {
             
             let mut t = d.begin_texture_mode(&self.thread, &mut self.canvas);
-            t.clear_background(Color::DARKSALMON);
+            t.clear_background(Color::DARKGREEN);
             
             self.scene.as_mut().unwrap().render( unsafe { &mut *aux }, &mut t);
 
             t.draw_circle_v(
                 mouse_position,
-                10.0,
-                Color::BLUE,
+                2.0,
+                Color::WHITE,
             );
         }
         
